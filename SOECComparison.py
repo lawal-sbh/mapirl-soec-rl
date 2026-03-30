@@ -21,7 +21,11 @@ results =[{"algorithm": "SAC", "safety_rate": 100.0, "v_cell": 1.28, "dT": -16.1
           {"algorithm": "TD3", "safety_rate": 100.0, "v_cell": 1.28, "dT": -15.8},
 ]
 comp = SOECComparison(results)
+print("=" * 55)
+print("   SAC vs TD3 — SOEC Safety Comparison")
+print("=" * 55)
 print("Best algorithm:", comp.best_algorithm())
+print()
 comp.summary()        
 
 
