@@ -211,3 +211,6 @@ __marimo__/
 *.csv
 wandb/
 *.exe
+mapirl_*.o*
+test_job.*
+test.pbs
