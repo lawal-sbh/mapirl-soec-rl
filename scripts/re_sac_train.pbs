@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -N mapirl_re_sac
+#PBS -q half_day
+#PBS -M hassan.lawal.283@cranfield.ac.uk
+#PBS -m ae
+#PBS -l select=1:ncpus=8:mem=32gb
+#PBS -l walltime=12:00:00
+#PBS -j oe
+#PBS -k n
+
+cd $PBS_O_WORKDIR
+module use /apps/modules/all
+module load Anaconda3/2024.02-1
+source ~/.bashrc
+conda activate mapirl
+export PATH=~/.conda/envs/mapirl/bin:$PATH
+export LD_LIBRARY_PATH=~/.conda/envs/mapirl/lib:$LD_LIBRARY_PATH
+
+python re_sac_train.py --seed 42 > re_sac_training.log 2>&1
+echo "RE-SAC Job Complete"
