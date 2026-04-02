@@ -1,31 +1,55 @@
 #!/bin/bash
 #PBS -N mapirl_re_sac_v2
 #PBS -J 1-5
-#PBS -l select=1:ncpus=2:mem=8gb
-#PBS -l walltime=01:30:00
-#PBS -q three_hour
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l walltime=08:00:00
 #PBS -o logs/re_sac_v2_${PBS_ARRAY_INDEX}.o
 #PBS -e logs/re_sac_v2_${PBS_ARRAY_INDEX}.e
 #PBS -m ae
 #PBS -M hassan.lawal.283@cranfield.ac.uk
 
+# =============================================================================
+#  MAPIRL-DT  —  RE-SAC v2  (LSTM-augmented, 100K steps)
+#  PBS array: 5 seeds  (PBS_ARRAY_INDEX = 1..5)
+#  Submit: qsub re_sac_v2_job.pbs
+# =============================================================================
+
 set -e
+
 REPO=~/idaes-ptl-setup
 SEED=${PBS_ARRAY_INDEX}
 
-echo "RE-SAC v2 | seed=${SEED} | node=$(hostname) | $(date)"
+echo "================================================="
+echo " RE-SAC v2  |  seed=${SEED}  |  node=$(hostname)"
+echo " Start: $(date)"
+echo "================================================="
 
+# ---- Activate environment ----
 source ~/.bashrc
 conda activate mapirl
+
+# ---- Working directory ----
 cd "$REPO"
 mkdir -p logs checkpoints/re_sac_v2
 
+# ---- Verify LSTM checkpoint exists ----
 LSTM_PATH="${REPO}/lstm_forecaster.pt"
 if [ ! -f "$LSTM_PATH" ]; then
-    echo "ERROR: lstm_forecaster.pt not found"; exit 1
+    echo "ERROR: lstm_forecaster.pt not found at $LSTM_PATH"
+    echo "Run the LSTM training job first."
+    exit 1
 fi
-echo "LSTM: $LSTM_PATH"
+echo "LSTM checkpoint: $LSTM_PATH  ($(du -sh $LSTM_PATH | cut -f1))"
 
-python agents/train_re_sac_v2.py     --seed            "$SEED"     --total-timesteps 100000     --device          cpu     --checkpoint-dir  checkpoints/re_sac_v2     --lstm-path       "$LSTM_PATH"
+# ---- Run training ----
+python agents/train_re_sac_v2.py \
+    --seed            "$SEED" \
+    --total-timesteps 100000 \
+    --device          cpu \
+    --checkpoint-dir  checkpoints/re_sac_v2 \
+    --lstm-path       "$LSTM_PATH"
 
-echo "Done seed=${SEED} | $(date)"
+echo ""
+echo "================================================="
+echo " Done  seed=${SEED}  |  $(date)"
+echo "================================================="
