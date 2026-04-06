@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N pinn_data_gen
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l walltime=12:00:00
+#PBS -q half_day
+#PBS -j oe
+#PBS -o logs/pinn_data_gen.log
+#PBS -m ae
+#PBS -M hassan.lawal.283@cranfield.ac.uk
+
+set -e
+cd /mnt/beegfs/home/hassan.lawal.283/idaes-ptl-setup
+source ~/.bashrc
+conda activate mapirl
+
+mkdir -p logs data
+echo "Starting PINN data generation: $(date)"
+python agents/generate_pinn_data.py
+echo "Done: $(date)"

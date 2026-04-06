@@ -214,3 +214,6 @@ wandb/
 mapirl_*.o*
 test_job.*
 test.pbs
+logs/
+*.o
+*.e
